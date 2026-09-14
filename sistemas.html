@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Os sistemas, na prática — LabIS / PUC-Campinas | Marcelo Puschnick</title>
+<meta name="description" content="O que são, na prática: ingest com IA, transcrição automática, roteirização assistida, edição via MCP, ComfyUI com modelos locais e produção em lote. O que já roda e o que é proposta.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .kicker { font-family: var(--font-mono); font-size: .76rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+
+  .badge-live, .badge-plan {
+    display: inline-block; font-family: var(--font-mono); font-size: .7rem;
+    padding: .2rem .6rem; border-radius: 100px; letter-spacing: .04em; white-space: nowrap;
+  }
+  .badge-live { background: rgba(39,174,96,.14); border: 1px solid rgba(39,174,96,.5); color: #4fd18b; }
+  .badge-plan { background: rgba(212,165,116,.12); border: 1px solid rgba(212,165,116,.5); color: var(--accent); }
+
+  .mod {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.8rem 2rem; margin-bottom: 1.6rem;
+  }
+  .mod:hover { border-color: rgba(212,165,116,.45); }
+  .mod-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: .4rem; }
+  .mod-head h2 { font-size: 1.32rem; margin: 0; }
+  .mod .plain {
+    font-size: 1.04rem; color: var(--text); border-left: 3px solid var(--accent);
+    padding-left: .9rem; margin: .9rem 0 1.1rem;
+  }
+  .mod h3 { font-size: .82rem; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); font-weight: 600; margin: 1.1rem 0 .5rem; }
+  .steps { counter-reset: s; list-style: none; margin: 0; }
+  .steps li { counter-increment: s; position: relative; padding-left: 2rem; margin-bottom: .42rem; font-size: .94rem; color: var(--text-muted); }
+  .steps li::before {
+    content: counter(s); position: absolute; left: 0; top: .05rem;
+    width: 1.35rem; height: 1.35rem; border-radius: 50%;
+    background: var(--accent-glow); border: 1px solid rgba(212,165,116,.45);
+    color: var(--accent); font-family: var(--font-mono); font-size: .7rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .gain { font-size: .95rem; color: var(--text); background: var(--bg-alt); border-radius: 8px; padding: .85rem 1rem; margin-top: .9rem; }
+  .gain strong { color: var(--accent); }
+
+  .flow {
+    background: #0d0d0d; border: 1px solid var(--border); border-radius: 10px;
+    padding: 1.4rem 1.2rem; overflow-x: auto; margin: 1.5rem 0;
+  }
+  .flow pre {
+    font-family: var(--font-mono); font-size: .78rem; line-height: 1.75;
+    color: var(--text-muted); margin: 0; white-space: pre;
+  }
+  .flow pre b { color: var(--accent); font-weight: 500; }
+  .flow pre i { color: #4fd18b; font-style: normal; }
+
+  @media (max-width: 700px) { .mod { padding: 1.3rem 1.2rem; } }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="logo">MP<span>.</span></a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="index.html">Proposta</a></li>
+      <li><a href="proposta.html">Detalhamento</a></li>
+      <li><a href="sistemas.html" class="active">Sistemas</a></li>
+      <li><a href="curriculo.html">Currículo</a></li>
+      <li><a href="contato.html">Contato</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="section" style="padding-top: 6.5rem; padding-bottom: 1.5rem;">
+  <div class="container" style="max-width: 860px;">
+    <span class="kicker">Os sistemas, na prática</span>
+    <h1 style="font-size: 2.15rem; margin: .9rem 0 1rem; line-height: 1.2;">
+      O que é cada uma dessas coisas —<br>
+      <span style="color: var(--accent);">e o que o aluno ganha com ela</span>
+    </h1>
+    <p style="font-size: 1.06rem; line-height: 1.7;">
+      Escrevi esta página porque "usar IA na produção audiovisual" virou frase feita e não significa nada.
+      Abaixo estão os seis módulos concretos, com o que cada um faz, como funciona por dentro e — o que
+      importa — o que muda no dia de um estudante. Uso etiquetas para separar o que
+      <span class="badge-live">já roda</span> do que é <span class="badge-plan">proposta</span>.
+    </p>
+  </div>
+</section>
+
+<!-- FLUXO -->
+<section class="section" style="padding-top: 1rem;">
+  <div class="container" style="max-width: 900px;">
+    <h2 style="font-size: 1.3rem; margin-bottom: .3rem;">Como as peças se encaixam</h2>
+    <p style="margin-bottom: 0;">Um material entra num lado e sai publicável do outro, sem passar pela nuvem em nenhum ponto.</p>
+
+    <div class="flow">
+<pre>
+  <b>INGEST</b> ─ material bruto chega (entrevista, podcast, aula, TCC)
+     │
+     ▼
+  <b>Whisper local</b> ──────────►  transcrição com marcação de tempo        <i>[já roda]</i>
+     │
+     ▼
+  <b>Segmentação + indexação</b> ─►  acervo pesquisável por palavra          <i>[já roda]</i>
+     │
+     ▼
+  <b>LLM local (Ollama)</b> ─────►  mapa de montagem: cortes, inserts,
+     │                            overlays, legendas, quem fala            <i>[já roda]</i>
+     ▼
+  <b>2º LLM valida</b> ──────────►  nota de 0 a 100 + lista de problemas     <i>[já roda]</i>
+     │
+     ▼
+  <b>Exportação</b> ─────────────►  EDL / OTIO / FCPXML ─► DaVinci Resolve   <i>[já roda]</i>
+     │
+     ├──►  <b>agente MCP</b> executa na timeline, por conversa                <i>[proposta]</i>
+     │
+     ▼
+  <b>Templates + FFmpeg/Remotion</b> ─► cortes verticais, capas, cards       <i>[base pronta]</i>
+     │
+     ▼
+  <b>PUBLICAÇÃO</b> ─ redes, site, acervo institucional
+</pre>
+    </div>
+  </div>
+</section>
+
+<!-- MÓDULOS -->
+<section class="section" style="padding-top: 1rem;">
+  <div class="container" style="max-width: 860px;">
+
+    <!-- 1 -->
+    <div class="mod">
+      <div class="mod-head">
+        <div>
+          <span class="badge-live">já roda</span>
+          <h2 style="margin-top: .6rem;">1. Ingest com IA — o acervo que se procura por palavra</h2>
+        </div>
+      </div>
+      <p class="plain">Todo material que entra no laboratório é transcrito automaticamente e passa a ser
+        pesquisável por texto. O que antes dependia da memória de quem gravou vira busca.</p>
+
+      <h3>Como funciona</h3>
+      <ol class="steps">
+        <li>O arquivo é jogado numa pasta monitorada — nada de fluxo novo para o aluno aprender.</li>
+        <li>O Whisper roda na própria máquina e devolve a transcrição com marcação de tempo por fala.</li>
+        <li>O texto é cortado em blocos (por fala, por tema, por bloco de tempo) e indexado.</li>
+        <li>Uma busca devolve o trecho <em>e</em> o timecode exato no arquivo original.</li>
+      </ol>
+
+      <div class="gain"><strong>O que o aluno ganha:</strong> achar em segundos o trecho dentro de 4 horas de
+        bruto. É a base de qualquer decupagem — e o fim do "eu acho que ele falou isso em algum lugar".</div>
+
+      <p style="margin: .9rem 0 0; font-size: .88rem; color: var(--text-muted);">
+        Código: <span style="font-family: var(--font-mono);">transcricao-interviews</span> ·
+        busca e memória: <span style="font-family: var(--font-mono);">synthia-foundation</span>
+      </p>
+    </div>
+
+    <!-- 2 -->
+    <div class="mod">
+      <div class="mod-head">
+        <div>
+          <span class="badge-live">já roda</span>
+          <h2 style="margin-top: .6rem;">2. Roteirização assistida — do bruto ao mapa de montagem</h2>
+        </div>
+      </div>
+      <p class="plain">A partir da transcrição, um modelo local propõe a estrutura do vídeo: o que abre,
+        o que sai, onde entra B-roll, onde entra overlay, quem está falando. Não é o vídeo pronto — é o mapa
+        da montagem, revisável.</p>
+
+      <h3>Como funciona</h3>
+      <ol class="steps">
+        <li>A transcrição indexada é enviada a um modelo rodando localmente (Ollama).</li>
+        <li>O modelo devolve um mapa em JSON: cortes, inserts, overlays, legendas e identificação de quem fala.</li>
+        <li>Um <strong>segundo modelo</strong> revisa o mapa, dá uma nota de 0 a 100 e lista os problemas.</li>
+        <li>O mapa aprovado vira timeline por EDL e OpenTimelineIO, com as tracks já normalizadas
+            (V1 vídeo, V3 inserts, V4 overlays, V5 texto).</li>
+      </ol>
+
+      <div class="gain"><strong>O que o aluno ganha:</strong> sai de "tenho 4 horas de bruto" para um mapa de
+        montagem discutível em minutos. E, como a revisão é feita por um segundo modelo que aponta os próprios
+        erros, o aluno <em>aprende a julgar decisão de edição</em> em vez de só executar corte. Esse é o ponto
+        pedagógico do módulo, e não é enfeite.</div>
+
+      <p style="margin: .9rem 0 0; font-size: .88rem; color: var(--text-muted);">
+        Código: <span style="font-family: var(--font-mono);">agente-cia-local</span> ·
+        <span style="font-family: var(--font-mono);">transcricao-interviews</span>
+      </p>
+    </div>
+
+    <!-- 3 -->
+    <div class="mod">
+      <div class="mod-head">
+        <div>
+          <span class="badge-plan">proposta</span>
+          <h2 style="margin-top: .6rem;">3. Edição via MCP — o agente que opera a timeline</h2>
+        </div>
+      </div>
+      <p class="plain">Hoje o sistema entrega um <em>arquivo</em> que o aluno importa no Resolve. Com MCP, o
+        modelo passa a <em>executar</em> na timeline: criar track, inserir clip, marcar corte, aplicar
+        transição — por conversa, com registro de tudo.</p>
+
+      <h3>O que é MCP, sem jargão</h3>
+      <ol class="steps">
+        <li>MCP (<em>Model Context Protocol</em>) é um padrão que dá a um modelo acesso a <strong>ferramentas
+            reais</strong> — funções concretas — em vez de ele apenas gerar texto.</li>
+        <li>Cada ferramenta é uma ação no software: o DaVinci Resolve expõe uma API de scripting em Python,
+            então "inserir clip" e "criar marcador" viram ferramentas chamáveis.</li>
+        <li>O aluno pede em português: "monta os blocos 1 a 5 do mapa na V1 e marca os inserts na V3".</li>
+        <li>O agente executa, devolve o que fez e registra cada ação — com desfazer disponível.</li>
+      </ol>
+
+      <div class="gain"><strong>O que o aluno ganha:</strong> sai da execução mecânica (arrastar clip, marcar
+        entrada e saída) e passa a decidir. E, como cada ação é registrada e reversível, o processo continua
+        visível — o aluno vê o que foi feito e por quê, em vez de receber um vídeo pronto de uma caixa preta.</div>
+
+      <p style="margin: .9rem 0 0; font-size: .88rem; color: var(--text-muted);">
+        <strong style="color: var(--text);">Sendo direto:</strong> esta é a única peça que eu ainda não tenho
+        rodando. A base já existe (o mapa vira EDL/OTIO e o Resolve tem scripting); o que falta é a camada de
+        orquestração. Eu construiria isso dentro do horário, em fases, com o módulo anterior como fundação.
+      </p>
+    </div>
+
+    <!-- 4 -->
+    <div class="mod">
+      <div class="mod-head">
+        <div>
+          <span class="badge-plan">proposta</span>
+          <h2 style="margin-top: .6rem;">4. ComfyUI e modelos locais — criação visual e motion</h2>
+        </div>
+      </div>
+      <p class="plain">ComfyUI é um ambiente de fluxos visuais (grafos) para modelos de geração de imagem e
+        vídeo, rodando <strong>localmente</strong>. Serve para produzir e tratar material visual: storyboard,
+        arte de abertura, fundos, tratamento de imagem, ampliação de resolução, recorte de fundo.</p>
+
+      <h3>Como funcionaria no laboratório</h3>
+      <ol class="steps">
+        <li>Fluxos (<em>workflows</em>) prontos, versionados junto com o resto do código do LabIS.</li>
+        <li>O aluno parte de um template e ajusta parâmetros — sem precisar de placa dedicada na máquina dele.</li>
+        <li>A saída entra no pipeline de montagem como qualquer outro material, com as mesmas regras.</li>
+        <li>Curadoria e direitos: só modelos de licença aberta, e registro do que foi gerado por IA.</li>
+      </ol>
+
+      <div class="gain"><strong>O que o aluno ganha:</strong> produzir arte, vinheta e elemento gráfico sem
+        depender de banco de imagens pago nem de nuvem. E, mais importante, <em>aprender composição, cor e
+        tempo na prática</em>, mexendo — não assistindo.</div>
+
+      <p style="margin: .9rem 0 0; font-size: .88rem; color: var(--text-muted);">
+        <strong style="color: var(--text);">Sendo direto:</strong> proposta, não obra pronta. Exige GPU para
+        rodar com fluidez. O primeiro passo é medir o que a Universidade já tem e escolher um caso pequeno
+        (abertura de um programa, por exemplo) para provar valor antes de pedir qualquer equipamento.
+      </p>
+    </div>
+
+    <!-- 5 -->
+    <div class="mod">
+      <div class="mod-head">
+        <div>
+          <span class="badge-live">base pronta</span>
+          <h2 style="margin-top: .6rem;">5. Comunicação interna e redes, em lote</h2>
+        </div>
+      </div>
+      <p class="plain">Templates parametrizados: um arquivo de dados entra, e saem as peças prontas —
+        corte vertical legendado, capa, card, aviso. Sem ninguém parado fazendo a mesma coisa à mão.</p>
+
+      <h3>Como funciona</h3>
+      <ol class="steps">
+        <li>Um arquivo simples (título, data, nomes, duração, textos) alimenta o template.</li>
+        <li>O render roda por FFmpeg e Remotion, sem abrir interface gráfica.</li>
+        <li>Saem as versões de uma vez: 16:9, 9:16 e 1:1, com legenda embutida.</li>
+        <li>Padronização garantida: mesma fonte, mesma marca, mesmo enquadramento em todas as peças.</li>
+      </ol>
+
+      <div class="gain"><strong>O que o laboratório ganha:</strong> o que se produz dentro da PUC passa a ser
+        divulgado sem depender de sobra de tempo de ninguém. Podcast, <em>Ponto de Partida</em>, TCC, extensão —
+        cada entrega gera automaticamente suas peças sociais.</div>
+
+      <p style="margin: .9rem 0 0; font-size: .88rem; color: var(--text-muted);">
+        Código: <span style="font-family: var(--font-mono);">render-programatica</span> — a base funciona;
+        falta só o conjunto de templates com a identidade do laboratório.
+      </p>
+    </div>
+
+    <!-- 6 -->
+    <div class="mod">
+      <div class="mod-head">
+        <div>
+          <span class="badge-live">já roda</span>
+          <h2 style="margin-top: .6rem;">6. Tudo dentro da máquina — e por que isso é obrigatório</h2>
+        </div>
+      </div>
+      <p class="plain">Nenhum dado de aluno, entrevista, pesquisa ou imagem sai do computador. Nenhuma
+        assinatura, nenhuma cobrança por minuto transcrito, nenhuma dependência de fornecedor.</p>
+
+      <h3>Como é feito</h3>
+      <ol class="steps">
+        <li>Modelos de linguagem e de fala rodam localmente (Ollama, Whisper).</li>
+        <li>A memória do sistema é um arquivo JSON com busca por similaridade — sem banco vetorial externo,
+            o que torna backup, inspeção e auditoria triviais.</li>
+        <li>Os formatos de saída são abertos: EDL, OpenTimelineIO e FCPXML. Sem aprisionamento a plataforma.</li>
+        <li>Todo o processamento é registrado em log e o código é público, auditável por qualquer pessoa.</li>
+      </ol>
+
+      <div class="gain"><strong>Por que isto não é detalhe:</strong> o acervo do laboratório tem pesquisa com
+        seres humanos, imagem de estudante e material de extensão. Rodar tudo localmente é o que permite usar
+        IA aqui sem criar um problema de LGPD. É <em>LGPD por desenho</em> — condição, não promessa.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FECHAMENTO -->
+<section class="section" style="background: var(--surface);">
+  <div class="container" style="max-width: 780px; text-align: center;">
+    <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">A parte que me interessa de verdade</h2>
+    <p style="margin-bottom: .9rem;">
+      Nenhum desses módulos serve se ficar dependendo de mim. Por isso o código é público, a documentação é
+      gerada automaticamente pelo próprio código e cada oficina termina com material que o aluno leva.
+    </p>
+    <p style="margin-bottom: 2rem;">
+      O objetivo é que o laboratório continue funcionando com isso depois que eu não estiver mais na sala —
+      e que os alunos saiam sabendo explicar o que fizeram.
+    </p>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+      <a href="proposta.html" class="btn btn-primary">Voltar à proposta →</a>
+      <a href="contato.html" class="btn btn-secondary">Falar comigo</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p><strong>Marcelo Henrique Puschnick</strong> — Editor de VT e Direção de Imagens</p>
+    <p>Campinas, SP — Brasil</p>
+    <div class="footer-links">
+      <a href="index.html">Proposta</a>
+      <a href="proposta.html">Detalhamento</a>
+      <a href="sistemas.html">Sistemas</a>
+      <a href="curriculo.html">Currículo</a>
+      <a href="contato.html">Contato</a>
+    </div>
+    <p style="margin-top: 1.5rem; font-size: .75rem; color: #666;">
+      Página preparada para a PUC-Campinas · Laboratório de Imagem e Som (LabIS)
+    </p>
+  </div>
+</footer>
+
+<script>
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) entry.target.classList.add('is-visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.animate-on-scroll').forEach(function (el) { observer.observe(el); });
+</script>
+</body>
+</html>
